@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+        <RootNamespace>AirshipSimulation</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="OSMLSGlobalLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\OSMLS\bin\Debug\netcoreapp2.1\OSMLSGlobalLibrary.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NetTopologySuite" Version="2.0.0" />
+      <PackageReference Include="NetTopologySuite.Features" Version="2.0.0" />
+    </ItemGroup>
+
+    <Target Name="AfterBuild">
+        <Exec Command="xcopy C:\projects\csharp\osmlifesimulation\VolkSimulation\VolkSimulation\bin\Debug\netcoreapp2.1\VolkSimulation.dll C:\projects\csharp\osmlifesimulation\OSMLS\modules /Y /I" />
+    </Target>
+
+
+</Project>

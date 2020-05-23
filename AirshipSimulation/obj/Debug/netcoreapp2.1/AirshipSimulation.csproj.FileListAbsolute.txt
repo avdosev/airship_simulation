@@ -1,0 +1,11 @@
+D:\projects\csharp\osmlifesimulation\AirshipSimulation\AirshipSimulation\bin\Debug\netcoreapp2.1\AirshipSimulation.deps.json
+D:\projects\csharp\osmlifesimulation\AirshipSimulation\AirshipSimulation\bin\Debug\netcoreapp2.1\AirshipSimulation.dll
+D:\projects\csharp\osmlifesimulation\AirshipSimulation\AirshipSimulation\bin\Debug\netcoreapp2.1\AirshipSimulation.pdb
+D:\projects\csharp\osmlifesimulation\AirshipSimulation\AirshipSimulation\bin\Debug\netcoreapp2.1\OSMLSGlobalLibrary.dll
+D:\projects\csharp\osmlifesimulation\AirshipSimulation\AirshipSimulation\bin\Debug\netcoreapp2.1\OSMLSGlobalLibrary.pdb
+D:\projects\csharp\osmlifesimulation\AirshipSimulation\AirshipSimulation\obj\Debug\netcoreapp2.1\AirshipSimulation.csprojAssemblyReference.cache
+D:\projects\csharp\osmlifesimulation\AirshipSimulation\AirshipSimulation\obj\Debug\netcoreapp2.1\AirshipSimulation.AssemblyInfoInputs.cache
+D:\projects\csharp\osmlifesimulation\AirshipSimulation\AirshipSimulation\obj\Debug\netcoreapp2.1\AirshipSimulation.AssemblyInfo.cs
+D:\projects\csharp\osmlifesimulation\AirshipSimulation\AirshipSimulation\obj\Debug\netcoreapp2.1\AirshipSimulation.csproj.CopyComplete
+D:\projects\csharp\osmlifesimulation\AirshipSimulation\AirshipSimulation\obj\Debug\netcoreapp2.1\AirshipSimulation.dll
+D:\projects\csharp\osmlifesimulation\AirshipSimulation\AirshipSimulation\obj\Debug\netcoreapp2.1\AirshipSimulation.pdb
