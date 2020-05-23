@@ -4,23 +4,51 @@ using OSMLSGlobalLibrary;
 using OSMLSGlobalLibrary.Map;
 using OSMLSGlobalLibrary.Modules;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace AirshipSimulation
 {
+    public class WindMap
+    {
+        private readonly Dictionary<Coordinate, Coordinate> _coordinatesToWindVec;
+        public WindMap()
+        {
+            _coordinatesToWindVec = new Dictionary<Coordinate, Coordinate>();
+        }
 
+        public void Insert(Coordinate coord, double U, double V)
+        {
+            _coordinatesToWindVec[coord] = new Coordinate(U, V);
+        }
+
+        public Coordinate GetWindDirection(Coordinate position)
+        {
+            // Todo: need round position;
+            return _coordinatesToWindVec[position];
+        }
+    }
 
     public class Module : OSMLSModule
     {
-        public (int leftX, int rightX, int downY, int upY) map;
-
-        // Тестовый полигон.
-        Polygon polygon;
-
+        private WindMap _windMap;
         protected override void Initialize()
         {
-            
-            
+            _windMap = new WindMap();
+            var csvWindData = File.ReadLines("./current-wind.csv");
+            foreach (var line in csvWindData.Skip(1))
+            {
+                if (line.Length == 0) continue;
+                // U,V,la,lo;
+                var data = line.Split(',').Select(s =>
+                {
+                    double.TryParse(s, out var d);
+                    return d;
+                }).ToArray();
+                double la = data[2], lo = data[3], U = data[0], V = data[1];
+                var coord = MathExtensions.LatLonToSpherMerc(la, lo);
+                _windMap.Insert(coord, U, V);
+            }
         }
         
         public override void Update(long elapsedMilliseconds)
