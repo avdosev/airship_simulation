@@ -64,7 +64,7 @@ namespace AirshipSimulation
 
         public void Insert(int x, int y, double U, double V)
         {
-            _coordinatesToWindVec[(y, x)] = new Coordinate(U, V);
+            _coordinatesToWindVec[(y, x)] = new Coordinate(Convert.ToInt32(U), Convert.ToInt32(V));
         }
 
         public Coordinate GetWindDirection(Coordinate position)
@@ -90,17 +90,22 @@ namespace AirshipSimulation
                 // U,V,la,lo;
                 var data = line.Split(',').Select(s =>
                 {
-                    double.TryParse(s, out var d);
+                    double.TryParse(s.Replace('.', ','), out var d);
                     return d;
                 }).ToArray();
                 double la = data[2], lo = data[3], U = data[0], V = data[1];
                 _windMap.Insert((int)la, (int)lo, U, V);
             }
+            
+            MapObjects.Add(new Aerostat(new Coordinate(4940278, 6233593),  _windMap));
         }
         
         public override void Update(long elapsedMilliseconds)
         {
-            
+            foreach (var aerostat in MapObjects.GetAll<Aerostat>())
+            {
+                aerostat.Move();
+            }
         }
     }
 
@@ -109,13 +114,10 @@ namespace AirshipSimulation
         public static double distance(this Point p1, Point p2) => Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
         public static double distance(this Point p1, Coordinate p2) => Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
 
-        public static void Move(this Point p, Coordinate direction, double speed)
+        public static void Move(this Point p, Coordinate direction)
         {
-            double MinimumDirection(double s, double d) =>
-                Math.Min(speed, Math.Abs(s - d)) * Math.Sign(d - s);
-            
-            p.X += MinimumDirection(p.X, direction.X);
-            p.Y += MinimumDirection(p.Y, direction.Y);
+            p.X += direction.X;
+            p.Y += direction.Y;
         }
     }
 
@@ -136,17 +138,19 @@ namespace AirshipSimulation
             })
         });
         ")]
-    class Aerostat : Point 
+    class Aerostat : Point
     {
-        private Coordinate destinationPoint = null;
-        public Aerostat(Coordinate coordinate) : base(coordinate)
+        private readonly WindMap _windMap;
+        public Aerostat(Coordinate coordinate, WindMap windMap) : base(coordinate)
         {
+            _windMap = windMap;
         }
 
         public void Move()
         {
-            var speed = .0;
-            this.Move(destinationPoint, speed);
+            var direction = _windMap.GetWindDirection(this.Coordinate);
+            
+            this.Move(direction);
         }
     }
 
