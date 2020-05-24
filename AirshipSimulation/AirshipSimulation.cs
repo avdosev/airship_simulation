@@ -9,23 +9,71 @@ using System.Linq;
 
 namespace AirshipSimulation
 {
-    public class WindMap
+    public static class CoordinateExtension
     {
-        private readonly Dictionary<Coordinate, Coordinate> _coordinatesToWindVec;
-        public WindMap()
+        public static (double la, double lo) toLatLon(this Coordinate coord)
         {
-            _coordinatesToWindVec = new Dictionary<Coordinate, Coordinate>();
+            var la = yToLat(coord.Y);
+            var lo = xToLon(coord.X);
+            return (la, lo);
+        }
+        
+        private static readonly double R_MAJOR = 6378137.0;
+        private static readonly double R_MINOR = 6356752.3142;
+        private static readonly double RATIO = R_MINOR / R_MAJOR;
+        private static readonly double ECCENT = Math.Sqrt(1.0 - (RATIO * RATIO));
+        private static readonly double COM = 0.5 * ECCENT;
+        
+        private static readonly double RAD2Deg = 180.0 / Math.PI;
+        private static readonly double PI_2 = Math.PI / 2.0;
+
+        public static double xToLon(double x)
+        {
+            return RadToDeg(x) / R_MAJOR;
         }
 
-        public void Insert(Coordinate coord, double U, double V)
+        public static double yToLat(double y)
         {
-            _coordinatesToWindVec[coord] = new Coordinate(U, V);
+            double ts = Math.Exp(-y / R_MAJOR);
+            double phi = PI_2 - 2 * Math.Atan(ts);
+            double dphi = 1.0;
+            int i = 0;
+            while ((Math.Abs(dphi) > 0.000000001) && (i < 15))
+            {
+                double con = ECCENT * Math.Sin(phi);
+                dphi = PI_2 - 2 * Math.Atan(ts * Math.Pow((1.0 - con) / (1.0 + con), COM)) - phi;
+                phi += dphi;
+                i++;
+            }
+            return RadToDeg(phi);
+        }
+
+        private static double RadToDeg(double rad)
+        {
+            return rad * RAD2Deg;
+        }
+
+    } 
+    public class WindMap
+    {
+        private readonly Dictionary<(int, int), Coordinate> _coordinatesToWindVec;
+        public WindMap()
+        {
+            _coordinatesToWindVec = new Dictionary<(int, int), Coordinate>();
+        }
+
+        public void Insert(int x, int y, double U, double V)
+        {
+            _coordinatesToWindVec[(y, x)] = new Coordinate(U, V);
         }
 
         public Coordinate GetWindDirection(Coordinate position)
         {
-            // Todo: need round position;
-            return _coordinatesToWindVec[position];
+            var (la, lo) = position.toLatLon();
+            var y = (int)Math.Round(la);
+            var x = (int)Math.Round(lo);
+            
+            return _coordinatesToWindVec[(y, x)];
         }
     }
 
@@ -46,8 +94,7 @@ namespace AirshipSimulation
                     return d;
                 }).ToArray();
                 double la = data[2], lo = data[3], U = data[0], V = data[1];
-                var coord = MathExtensions.LatLonToSpherMerc(la, lo);
-                _windMap.Insert(coord, U, V);
+                _windMap.Insert((int)la, (int)lo, U, V);
             }
         }
         
